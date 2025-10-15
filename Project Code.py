@@ -51,7 +51,7 @@ data = read_csv('SampleSuperstore.csv')
 result = percent_binders_in_california(data)
 print(f"Percentage of office supplies in CA that are binders: {result:.2f}%")
 
-
+# Consult team
 def write_results(results, filename):
     with open(filename, 'w') as file:
         file.write("Project 1 Results\n")
