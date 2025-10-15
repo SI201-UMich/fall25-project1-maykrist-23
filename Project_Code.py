@@ -3,7 +3,10 @@
 # Email: maykrist@umich.edu
 # Collaborators: Carmela Taylor, Katia Hemphill
 # Who Wrote What: 
-# AI Usage:  
+# AI Usage: Used Claude to help me debug, structure test cases, and break down project instructions.
+# When debugging, would provide Claude with the snippet of my code that's having issues and ask it to explain what the code is currently doing.
+# When structuring test cases, would ask Claude the differnce between general and edge test cases.
+# When breaking down project tasks, would provide Claude with a snippet of the instructions and ask me to explain it to me like I'm five. Helped me understand the task much easier.
 
 import csv
 import unittest
@@ -11,7 +14,15 @@ import unittest
 def get_data(file):
     with open(file) as fn:
         csv_reader = csv.DictReader(fn)
-        data = [row for row in csv_reader]
+        data = []
+        for row in csv_reader:
+            for key in ['Sales', 'Quantity', 'Discount', 'Profit']:
+                try:
+                    if row.get(key):
+                        row[key] = float(row[key])
+                except ValueError:
+                    row[key] = 0.0
+            data.append(row)
     return data 
 
 
@@ -24,15 +35,12 @@ def avg_furniture_sales_central(superstore_data):
             and row.get('Region') == 'Central'
             and row.get('Sales') not in (None, '')
         ):
-            try:
-                total += float(row['Sales'])
-                count += 1
-            except ValueError:
-                continue
+            total += row['Sales']
+            count += 1
+        if count == 0:
+            return 0.0
+        return total / count
 
-    if count == 0:
-        return 0.0
-    return total / count
 
 def percent_binders_in_california(superstore_data):
     office_supplies_california = 0
@@ -56,11 +64,10 @@ def percent_binders_in_california(superstore_data):
 
 def write_results(calc1, calc2, filename):
     with open(filename, 'w') as file:
-        file.write("Project 1 Results\n")
-        file.write("Average Central Furniture Sales: $" + str(calc1) + "\n")
-        file.write("Percent of Binders in California: " + str(calc2) + "%\n")
+        file.write("Project 1 Results:\n")
+        file.write("Average Central Furniture Sales: $" + str(round(calc1, 2)) + "\n")
+        file.write("Percent of Binders in California: " + str(round(calc2, 2)) + "%\n")
 
-#Come back to this function
 def main():
     data = get_data('SampleSuperstore.csv')
     
